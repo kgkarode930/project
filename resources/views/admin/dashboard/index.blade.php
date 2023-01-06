@@ -14,7 +14,7 @@
         </section>
 
         <!-- Main content -->
-        <section class="content">
+        {{-- <section class="content">
             <!-- Small boxes (Stat box) -->
             <div class="row">
                 <div class="col-lg-3 col-xs-6">
@@ -78,7 +78,7 @@
                 </div>
                 <!-- ./col -->
             </div>
-        </section>
+        </section> --}}
         <!-- /.content -->
     </div>
 @endsection

@@ -23,14 +23,15 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'contact',
+        'commission',
+        'property_id',
+        'city',
+        'experience',
         'email_verified_at',
-        'mobile_number',
         'password',
         'remember_token',
-        'profile_image',
-        'country_id',
-        'city_id',
-        'state_id'
+        'status'
     ];
 
     /**

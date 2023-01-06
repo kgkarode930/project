@@ -25,19 +25,14 @@
             <li class="{{ Request::is('dashboard*') ? 'active' : '' }}">
                 <a href="{{ route('dashboardIndex') }}"><i class="fa fa-dashboard"></i> <span>DASHBOARD</span></a>
             </li>
-            <li class="{{ Request::is('countries*') ? 'active' : '' }}">
-                <a href="{{ route('countries.index') }}"><i class="fa fa-building"></i>COUNTRY LIST</a>
+            @if (auth()->user()->is_admin)
+                <li class="{{ Request::is('brokers*') ? 'active' : '' }}">
+                    <a href="{{ route('brokers.index') }}"><i class="fa fa-building"></i>BROKERS</a>
+                </li>
+            @endif
+            <li class="{{ Request::is('properties*') ? 'active' : '' }}">
+                <a href="{{ route('properties.index') }}"><i class="fa fa-building"></i>Properties</a>
             </li>
-            <li class="{{ Request::is('states*') ? 'active' : '' }}">
-                <a href="{{ route('states.index') }}"><i class="fa fa-building"></i>STATES LIST</a>
-            </li>
-            <li class="{{ Request::is('cities*') ? 'active' : '' }}">
-                <a href="{{ route('cities.index') }}"><i class="fa fa-building"></i>CITIES</a>
-            </li>
-            <li class="{{ Request::is('users*') ? 'active' : '' }}">
-                <a href="{{ route('users.index') }}"><i class="fa fa-building"></i>USERS</a>
-            </li>
-
             <li><a href="{{ route('logout') }}"><i class="fa fa-sign-out"></i>LOGOUT</a></li>
         </ul>
         </li>

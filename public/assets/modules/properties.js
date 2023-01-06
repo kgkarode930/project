@@ -22,20 +22,32 @@ $(document).ready(function () {
                     name: "id",
                 },
                 {
-                    data: "state.state_name",
-                    name: "state.state_name",
+                    data: "name",
+                    name: "name",
                 },
                 {
-                    data: "district_name",
-                    name: "district_name",
+                    data: "address",
+                    name: "address",
                 },
                 {
-                    data: "district_code",
-                    name: "district_code",
+                    data: "contact",
+                    name: "contact",
                 },
                 {
-                    data: "active_status",
-                    name: "active_status",
+                    data: "city",
+                    name: "city",
+                },
+                {
+                    data: "zip_code",
+                    name: "zip_code",
+                },
+                {
+                    data: "kind_of_property",
+                    name: "kind_of_property",
+                },
+                {
+                    data: "property_status",
+                    name: "property_status",
                 },
                 {
                     data: "action",

@@ -22,12 +22,32 @@ $(document).ready(function () {
                     name: "id",
                 },
                 {
-                    data: "country_name",
-                    name: "country_name",
+                    data: "name",
+                    name: "name",
                 },
                 {
-                    data: "country_code",
-                    name: "country_code",
+                    data: "email",
+                    name: "email",
+                },
+                {
+                    data: "contact",
+                    name: "contact",
+                },
+                {
+                    data: "experience",
+                    name: "experience",
+                },
+                {
+                    data: "city",
+                    name: "city",
+                },
+                {
+                    data: "commission",
+                    name: "commission",
+                },
+                {
+                    data: "status",
+                    name: "status",
                 },
                 {
                     data: "action",

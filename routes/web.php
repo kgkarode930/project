@@ -21,18 +21,9 @@ Route::post('login', 'AuthController@loginPost')->name('loginPost');
 
 Route::prefix('/')->middleware('auth')->group(function () {
     Route::get('logout', 'AuthController@logout')->name('logout');
-    Route::get('profile', 'AuthController@profile')->name('profile');
     Route::get('dashboard', 'DashboardController@dashboardIndex')->name('dashboardIndex');
-
-    //Address Module
-    Route::resource('states', 'StateController');
-    Route::resource('countries', 'CountryController');
-    Route::resource('cities', 'CityController');
-    Route::get('create/cities/bulk', 'CityController@createBulk')->name('city.create.popup');
-    Route::get('store/cities/bulk', 'CityController@storeBulk')->name('city.create.bulk');
-
-    Route::resource('users', 'UserController');
-
+    Route::resource('brokers', 'BrokerController');
+    Route::resource('properties', 'PropertyController');
     //AjaxCommonController
     Route::post('getAjaxDropdown', 'AjaxCommonController@index')->name('getAjaxDropdown');
 });

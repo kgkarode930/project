@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Branch;
-use App\Models\City;
-use App\Models\Country;
-use App\Models\State;
-use App\Models\User;
+use App\Models\Property;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 
-class UserController extends Controller
+class PropertyController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,9 +19,13 @@ class UserController extends Controller
     public function index()
     {
         if (!request()->ajax()) {
-            return view('admin.users.index');
+            return view('admin.properties.index');
         } else {
-            $data = User::with('country','state','city')->select('id', 'name', 'email','mobile_number','country_id','state_id','city_id');
+            $data = Property::when(!auth()->user()->is_admin, function ($q){
+                $q->whereHas('broker',function ($q1){
+                    $q1->where('users.id',auth()->id());
+                });
+            })->select('id', 'name', 'contact', 'address', 'city', 'zip_code', 'kind_of_property', 'area', 'total_valuation', 'property_status');
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -43,15 +43,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        $countries = Country::get();
-        $states = State::get();
-        $cities = City::get();
         $roles = Role::where('id', '!=', '1')->get();
         $data = array(
-            'countries' => $countries,
-            'states' => $states,
-            'cities' => $cities,
-            'action'    => route('users.store'),
+            'action'    => route('properties.store'),
             'roles'     => $roles,
             'method' => 'POST',
         );
@@ -59,7 +53,7 @@ class UserController extends Controller
             'status'     => true,
             'statusCode' => 200,
             'message'    => 'AjaxModal Loaded',
-            'data'       => view('admin.users.ajaxModal', $data)->render()
+            'data'       => view('admin.properties.ajaxModal', $data)->render()
         ]);
     }
 
@@ -74,7 +68,6 @@ class UserController extends Controller
         $postData = $request->all();
         $validator = Validator::make($postData, [
             'name'     => "required",
-            'email'    => "required|unique:users,email",
         ]);
 
         //If Validation failed
@@ -86,12 +79,7 @@ class UserController extends Controller
                 'errors'     => $validator->errors()
             ]);
         }
-        $postData['password'] = Hash::make(12345678);
-        $userModel = User::create($postData);
-        //Assign Role
-        if ($userModel) {
-            $userModel->assignRole(2);
-        }
+        Property::create($postData);
         return response()->json([
             'status'     => true,
             'statusCode' => 200,
@@ -118,23 +106,17 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $userModel = User::find($id);
-        $countries = Country::get();
-        $states = State::get();
-        $cities = City::get();
+        $userModel = Property::find($id);
         $data = array(
-            'action'    => route('users.update', ['user' => $id]),
+            'action'    => route('properties.update', ['property' => $id]),
             'data' => $userModel,
-            'countries' => $countries,
-            'states' => $states,
-            'cities' => $cities,
             'method' => 'PUT',
         );
         return response()->json([
             'status'     => true,
             'statusCode' => 200,
             'message'    => 'AjaxModal Loaded',
-            'data'       => view('admin.users.ajaxModal', $data)->render()
+            'data'       => view('admin.properties.ajaxModal', $data)->render()
         ]);
     }
 
@@ -166,11 +148,11 @@ class UserController extends Controller
 
         if (!empty($postData['password'])) {
             $postData['password'] = Hash::make($postData['password']);
-        }else{
+        } else {
             $postData['password'] = Hash::make(12345678);
         }
 
-        $userModel = User::find($id);
+        $userModel = Property::find($id);
         if (!$userModel) {
             return response()->json([
                 'status'     => false,
@@ -195,7 +177,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::find($id);
+        $user = Property::find($id);
         if (!$user) {
             return response()->json(['status' => false, 'statusCode' => 419, 'message' => 'Not Found']);
         }
@@ -206,9 +188,13 @@ class UserController extends Controller
     public function getActions($row)
     {
         $action = '<div class="action-btn-container">';
-        $action .= '<a href="' . route('users.edit', ['user' => $row->id]) . '" class="btn btn-sm btn-warning ajaxModalPopup" data-modal_title="Update User"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>';
-        $action .= '<a href="' . route('users.destroy', ['user' => $row->id]) . '" data-id="' . $row->id . '" class="btn btn-sm btn-danger ajaxModalDelete" data-modal_title="Delete City"><i class="fa fa-trash-o" aria-hidden="true"></i></a>';
+
+        if (auth()->user()->is_admin) {
+            $action .= '<a href="' . route('properties.edit', ['property' => $row->id]) . '" class="btn btn-sm btn-warning ajaxModalPopup" data-modal_title="Update Property"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>';
+            $action .= '<a href="' . route('properties.destroy', ['property' => $row->id]) . '" data-id="' . $row->id . '" class="btn btn-sm btn-danger ajaxModalDelete" data-modal_title="Delete City"><i class="fa fa-trash-o" aria-hidden="true"></i></a>';
+        }
         $action .= '</div>';
+
         return $action;
     }
 }
